@@ -25,7 +25,7 @@ iii) Download datasets
 iv) Set up local_config.py to point to appropriate directories for saving and reading data
 
 ## How to run method on DAVIS and YouTubeVOS:
-i) Download weights from TBD
+i) Download weights from https://drive.google.com/file/d/1lVv7n0qOtJEPk3aJ2-KGrOfYrOHVnBbT/view?usp=sharing
 ii) Run
 ```bash
 python3 -u runfiles/main_runfile001.py --test
