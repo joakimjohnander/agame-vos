@@ -1,5 +1,5 @@
 # agame-vos
-PyTorch implementation of the paper "A Generative Appearance Model for End-to-End Video Object Segmentation", including complete training code and trained models.
+PyTorch implementation of the paper [A Generative Appearance Model for End-to-End Video Object Segmentation](https://arxiv.org/abs/1811.11611), including complete training code and trained models.
 
 ## Dependencies:
 ```bash
