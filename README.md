@@ -13,26 +13,27 @@ tqdm
 
 ## Datasets utilized:
 DAVIS
+
 YouTubeVOS
 
 ## How to setup:
-i) Install dependencies
-ii) Clone this repo:
+1. Install dependencies
+2. Clone this repo:
 ```bash
 git clone https://github.com/joakimjohnander/agame-vos.git
 ```
-iii) Download datasets
-iv) Set up local_config.py to point to appropriate directories for saving and reading data
+3. Download datasets
+4. Set up local_config.py to point to appropriate directories for saving and reading data
 
 ## How to run method on DAVIS and YouTubeVOS:
-i) Download weights from https://drive.google.com/file/d/1lVv7n0qOtJEPk3aJ2-KGrOfYrOHVnBbT/view?usp=sharing
-ii) Run
+1. Download weights from https://drive.google.com/file/d/1lVv7n0qOtJEPk3aJ2-KGrOfYrOHVnBbT/view?usp=sharing
+2. Run
 ```bash
 python3 -u runfiles/main_runfile001.py --test
 ```
 
 ## How to train (and test) a model:
-i) Run
+1. Run
 ```bash
 python3 -u runfiles/main_runfile001.py --train --test
 ```
