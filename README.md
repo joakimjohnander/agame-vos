@@ -24,6 +24,20 @@ git clone https://github.com/joakimjohnander/agame-vos.git
 ```
 3. Download datasets
 4. Set up local_config.py to point to appropriate directories for saving and reading data
+5. Move the ytvos_trainval_split/ImageSets directory into your YouTubeVOS data directory. The directory structure should look like
+```bash
+/...some_path.../youtube_vos
+-- train
+---- Annotations
+---- JPEGImages
+-- valid
+---- Annotations
+---- JPEGImages
+-- ImageSets
+---- train.txt
+---- train_joakim.txt
+---- val_joakim.txt
+```
 
 ## How to run method on DAVIS and YouTubeVOS:
 1. Download weights from https://drive.google.com/file/d/1lVv7n0qOtJEPk3aJ2-KGrOfYrOHVnBbT/view?usp=sharing
