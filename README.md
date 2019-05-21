@@ -39,17 +39,18 @@ git clone https://github.com/joakimjohnander/agame-vos.git
 ---- val_joakim.txt
 ```
 
-## How to run method on DAVIS and YouTubeVOS:
+## How to run method on DAVIS and YouTubeVOS with pre-trained weights:
 1. Download weights from https://drive.google.com/file/d/1lVv7n0qOtJEPk3aJ2-KGrOfYrOHVnBbT/view?usp=sharing
-2. Run
+2. Put the weights at the path pointed out by config['workspace_path'] in local_config.py.
+3. Run
 ```bash
-python3 -u runfiles/main_runfile001.py --test
+python3 -u runfiles/main_runfile.py --test
 ```
 
-## How to train (and test) a model:
+## How to train (and test) a new model:
 1. Run
 ```bash
-python3 -u runfiles/main_runfile001.py --train --test
+python3 -u runfiles/main_runfile.py --train --test
 ```
 
 Most settings used for training and evaluation are set in your runfiles. Each runfile should correspond to a single experiment. I supplied an example runfile.
