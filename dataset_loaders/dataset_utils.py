@@ -88,3 +88,16 @@ class JointRandomHorizontalFlip(object):
         else:
             return args
 
+def centercrop(tensor, cropsize):
+    _, _, H, W = tensor.size()
+    A, B = cropsize
+#    print((H,W), (A,B), (H-A)//2, (H+A)//2
+    return tensor[:,:,(H-A)//2:(H+A)//2,(W-B)//2:(W+B)//2]
+
+class JointRandomScale(object):
+    def __call__(self, images, labels):
+        L, _, H, W = images.size()
+        scales = ((1.0 + (torch.rand(1) < .5).float()*torch.rand(1)*.1)*torch.ones(L)).cumprod(0).tolist()
+        images = torch.cat([centercrop(F.interpolate(images[l:l+1,:,:,:], scale_factor=scales[l], mode='bilinear', align_corners=False), (H, W)) for l in range(L)], dim=0)
+        labels = torch.cat([centercrop(F.interpolate(labels[l,:,:].view(1,1,H,W).float(), scale_factor=scales[l], mode='nearest').long(), (H,W)) for l in range(L)], dim=0).view(L,1,H,W)
+        return images, labels

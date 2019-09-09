@@ -35,7 +35,7 @@ parser.add_option("--test", action="store_true", dest="test", default=None)
 # Training
 ##################
 def train_alpha(model):
-    num_epochs = 160
+    num_epochs = 80
     batch_size = 4
     nframes = 8
     nframes_val = 32
@@ -62,17 +62,17 @@ def train_alpha(model):
         return [random.choice(lst)]
     def deterministic_object_sampler(lst):
         return [lst[0]]
-    train_transform = dataset_loaders.JointCompose([dataset_loaders.JointRandomHorizontalFlip()])
+    train_transform = dataset_loaders.JointCompose([dataset_loaders.JointRandomHorizontalFlip(),
+                                                    dataset_loaders.JointRandomScale()])
 
     train_set = torch.utils.data.ConcatDataset([
         DAVIS17V2(config['davis17_path'], '2017', 'train', image_read, label_read, train_transform, nframes,
                   random_object_sampler, start_frame='random'),
-        YTVOSV2(config['ytvos_path'], 'train', 'train_joakim', 'JPEGImages', image_read, label_read, train_transform,
-                nframes, random_object_sampler, start_frame='random')
     ])
     val_set = YTVOSV2(config['ytvos_path'], 'train', 'val_joakim', 'JPEGImages', image_read, label_read, None,
                       nframes_val, deterministic_object_sampler, start_frame='first')
-    train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size, num_workers=11)
+    sampler = torch.utils.data.WeightedRandomSampler(len(train_set)*[1,], 2600, replacement=True)
+    train_loader = DataLoader(train_set, sampler=sampler, batch_size=batch_size, num_workers=11)
     val_loader = DataLoader(val_set, shuffle=False, batch_size=batch_size, num_workers=11)
     print("Sets initiated with {} (train) and {} (val) samples.".format(len(train_set), len(val_set)))
 
@@ -80,14 +80,14 @@ def train_alpha(model):
     optimizer = torch.optim.Adam([param for param in model.parameters() if param.requires_grad],
                                  lr=1e-4, weight_decay=1e-5)
 
-    lr_sched = torch.optim.lr_scheduler.ExponentialLR(optimizer, .975)
+    lr_sched = torch.optim.lr_scheduler.ExponentialLR(optimizer, .95)
 
     trainer = trainers.VOSTrainer(
         model, optimizer, objective, lr_sched,
         train_loader, val_loader,
         use_gpu=True, workspace_dir=config['workspace_path'],
         save_name=os.path.splitext(os.path.basename(__file__))[0]+"_alpha",
-        checkpoint_interval=10, print_interval=25, debug=False)
+        checkpoint_interval=80, print_interval=25, debug=False)
     trainer.load_checkpoint()
     trainer.train(num_epochs)
 
@@ -125,13 +125,11 @@ def train_beta(model):
     train_set = torch.utils.data.ConcatDataset([
         DAVIS17V2(config['davis17_path'], '2017', 'train', image_read, label_read, train_transform, nframes,
                   random_object_sampler, start_frame='random'),
-        YTVOSV2(config['ytvos_path'], 'train', 'train_joakim', 'JPEGImages', image_read, label_read, train_transform,
-                nframes, random_object_sampler, start_frame='random')
     ])
     val_set = YTVOSV2(config['ytvos_path'], 'train', 'val_joakim', 'JPEGImages', image_read, label_read, None,
                       nframes_val, deterministic_object_sampler, start_frame='first')
 
-    sampler = torch.utils.data.WeightedRandomSampler(len(train_set.datasets[0])*[1/len(train_set.datasets[0])] + len(train_set.datasets[1])*[1/len(train_set.datasets[1])], 2*len(train_set.datasets[0]), replacement=False)
+    sampler = torch.utils.data.WeightedRandomSampler(len(train_set)*[1,], 118, replacement=True)
     train_loader = DataLoader(train_set, batch_size=batch_size, sampler=sampler, num_workers=11)
     val_loader = DataLoader(val_set, shuffle=False, batch_size=batch_size, num_workers=11)
     print("Sets initiated with {} (train) and {} (val) samples.".format(len(train_set), len(val_set)))
@@ -146,7 +144,7 @@ def train_beta(model):
         train_loader, val_loader,
         use_gpu=True, workspace_dir=config['workspace_path'],
         save_name=os.path.splitext(os.path.basename(__file__))[0]+"_beta",
-        checkpoint_interval=50, print_interval=25, debug=False)
+        checkpoint_interval=100, print_interval=25, debug=False)
     trainer.load_checkpoint()
     trainer.train(num_epochs)
 
